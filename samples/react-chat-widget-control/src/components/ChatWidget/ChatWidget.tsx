@@ -3,21 +3,43 @@ import { Widget, addResponseMessage, isWidgetOpened, dropMessages, addUserMessag
 import fetchOmnichannelConfig from '../../utils/fetchOmnichannelConfig';
 import {OmnichannelChatSDK, isCustomerMessage, isSystemMessage} from '@microsoft/omnichannel-chat-sdk';
 import 'react-chat-widget/lib/styles.css';
+import createChatSDK from '../../utils/createChatSDK';
 
+const useACS = false;
 const omnichannelConfig: any = fetchOmnichannelConfig();
+
+if (useACS) {
+  omnichannelConfig.orgId = '';
+  omnichannelConfig.orgUrl = '';
+  omnichannelConfig.widgetId = '';
+}
 
 console.log(`%c [OmnichannelConfig]`, 'background-color:#001433;color:#fff');
 console.log(omnichannelConfig);
 
 function ChatWidget() {
-  const [chatSDK, setChatSDK] = useState<OmnichannelChatSDK>();
+  const [chatSDK, setChatSDK] = useState<OmnichannelChatSDK | any>();
   const [open, setOpen] = useState<boolean>(false);
   const [hasChatStarted, setHasChatStarted] = useState<boolean>(false);
 
   useEffect(() => {
     const init = async () => {
+      if (useACS) {
+        const chatSDK = await createChatSDK(omnichannelConfig)
+        setChatSDK(chatSDK);
+
+        const liveChatContext = localStorage.getItem('liveChatContext');
+        if (liveChatContext && Object.keys(JSON.parse(liveChatContext)).length > 0) {
+          console.log("[liveChatContext]");
+          console.log(liveChatContext);
+        }
+
+        return;
+      }
+
       const chatSDK = new OmnichannelChatSDK(omnichannelConfig);
       await chatSDK.initialize();
+
       setChatSDK(chatSDK);
 
       const liveChatContext = localStorage.getItem('liveChatContext');
@@ -33,6 +55,13 @@ function ChatWidget() {
   const handleNewUserMessage = async (newMessage: any) => {
     console.log(`New message incoming! ${newMessage}`);
 
+    if (useACS) {
+      await chatSDK?.sendMessage({
+        content: newMessage
+      });
+      return;
+    }
+
     await chatSDK?.sendMessage({
       content: newMessage
     });
@@ -45,6 +74,34 @@ function ChatWidget() {
 
     if (!hasChatStarted && open) {
       console.log(`[StartChat]`);
+
+      if (useACS) {
+        const optionalParams: any = {};
+
+        // Check for active conversation in cache
+        const cachedLiveChatContext = localStorage.getItem('liveChatContext');
+        if (cachedLiveChatContext && Object.keys(JSON.parse(cachedLiveChatContext)).length > 0) {
+          console.log("[liveChatContext]");
+          optionalParams.liveChatContext = JSON.parse(cachedLiveChatContext);
+        }
+
+        await chatSDK?.startChat(optionalParams);
+
+        const chatToken = await chatSDK?.getChatToken();
+        console.log(`[chatToken]`);
+        console.log(chatToken);
+
+        // Cache current conversation context
+        const liveChatContext = await chatSDK?.getCurrentLiveChatContext();
+        localStorage.setItem('liveChatContext', JSON.stringify(liveChatContext));
+
+        chatSDK?.onNewMessage((message: any) => {
+          addResponseMessage(message.content);
+        });
+
+        setHasChatStarted(true);
+        return;
+      }
 
       const optionalParams: any = {};
 
@@ -86,6 +143,17 @@ function ChatWidget() {
 
     if (hasChatStarted && !open) {
       console.log(`[CloseChat]`);
+
+      if (useACS) {
+        await chatSDK?.endChat();
+
+        // Clean up
+        localStorage.removeItem('liveChatContext');
+        dropMessages()
+        setHasChatStarted(false);
+        return;
+      }
+
       await chatSDK?.endChat();
 
       // Clean up
