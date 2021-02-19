@@ -13,6 +13,10 @@ import { ActionType, Store } from '../context';
 import { useDidAppearListener, useNavigationButtonPressedListener } from '../utils/hooks';
 import { parseTranscript } from '../utils/parser';
 import attachementImage from '../assets/img/attachment.png';
+import fetchOmnichannelConfig from '../utils/fetchOmnichannelConfig';
+
+const useACS = false;
+const omnichannelConfig = fetchOmnichannelConfig(useACS);
 
 const typingAnimationDuration = 1500;
 const buttons = {
@@ -179,13 +183,10 @@ const ChatScreen = (props: ChatScreenProps) => {
   useEffect(() => {
     const init = async () => {
       // console.log(props);
-      const omnichannelConfig  = {
-        orgId,
-        orgUrl,
-        widgetId
-      };
-
+      console.info(`[useACS] ${useACS}`);
+      console.info(`[omnichannelConfig]`);
       console.info(omnichannelConfig);
+
       const chatSDK = new OmnichannelChatSDK(omnichannelConfig);
       await chatSDK.initialize();
       setChatSDK(chatSDK);
