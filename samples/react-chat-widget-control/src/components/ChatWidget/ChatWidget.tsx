@@ -86,10 +86,21 @@ function ChatWidget() {
         }
 
         await chatSDK?.startChat(optionalParams);
-
         const chatToken = await chatSDK?.getChatToken();
         console.log(`[chatToken]`);
         console.log(chatToken);
+
+        const messages = await chatSDK?.getMessages();
+
+        // Rehydrate messages
+        for (const message of messages.reverse()) {
+          const customerMessageCondition = (message.sender && message.sender.communicationUserId === chatToken.visitorId);
+          if (customerMessageCondition) {
+            addUserMessage(message.content.message);
+          } else {
+            addResponseMessage(message.content.message);
+          }
+        }
 
         // Cache current conversation context
         const liveChatContext = await chatSDK?.getCurrentLiveChatContext();

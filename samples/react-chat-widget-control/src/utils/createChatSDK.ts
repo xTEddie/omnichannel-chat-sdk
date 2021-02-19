@@ -147,7 +147,22 @@ class ChatSDKProxy {
 
     public async getMessages() {
         this.debug && console.log(`[ChatSDKProxy][getMessages]`);
-        return [];
+
+        const messages: any = [];
+        const pagedAsyncIterableIterator = await this.chatThreadClient.listMessages();
+        let nextMessage = await pagedAsyncIterableIterator.next();
+        while (!nextMessage.done) {
+            let chatMessage = nextMessage.value;
+
+            // Filter text type messages only
+            if (chatMessage.type == 'text') {
+                messages.push(chatMessage);
+            }
+
+            nextMessage = await pagedAsyncIterableIterator.next();
+        }
+
+        return messages;
     }
 
     public async getDataMaskingRules() {
