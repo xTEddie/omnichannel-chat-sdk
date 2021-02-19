@@ -16,6 +16,7 @@
     "@microsoft/omnichannel-chat-sdk": "^0.1.1-main.fadb071",
     "adaptivecards-reactnative": "^2.2.2",
     "buffer": "^6.0.3",
+    "node-libs-react-native": "^1.2.1",
     "react": "16.9.0",
     "react-native": "0.61.5",
     "react-native-document-picker": "^4.2.0",
