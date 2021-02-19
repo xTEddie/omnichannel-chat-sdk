@@ -155,7 +155,7 @@ class ChatSDKProxy {
             let chatMessage = nextMessage.value;
 
             // Filter text type messages only
-            if (chatMessage.type == 'text') {
+            if (chatMessage.type === 'text') {
                 messages.push(chatMessage);
             }
 
