@@ -66,6 +66,10 @@ const ChatScreen = (props: ChatScreenProps) => {
     console.log(`[onNewMessage] Received message: '${message.content}'`);
     // console.log(message);
 
+    if (useACS) {
+      return;
+    }
+
     const { messages } = state;
     const giftedChatMessage: any = createGiftedChatMessage(message);
     const extraMetaData = {
@@ -109,6 +113,10 @@ const ChatScreen = (props: ChatScreenProps) => {
   const onTypingEvent = useCallback(() => {
     console.info("[onTypingEvent]");
 
+    if (useACS) {
+      return;
+    }
+
     dispatch({type: ActionType.SET_TYPING, payload: true});
     setTimeout(() => {
       dispatch({type: ActionType.SET_TYPING, payload: false});
@@ -117,6 +125,10 @@ const ChatScreen = (props: ChatScreenProps) => {
 
   const onAgentEndSession = useCallback(() => {
     console.info("[onAgentEndSession]");
+
+    if (useACS) {
+      return;
+    }
 
     dispatch({type: ActionType.SET_AGENT_END_SESSION_EVENT, payload: true});
   }, [state]);
@@ -129,6 +141,31 @@ const ChatScreen = (props: ChatScreenProps) => {
 
     // Handles clicking end chat button
     if (buttonId === buttons.endChat.id) {
+
+      if (useACS) {
+        const rightButtons: any = [];
+
+        // Switch TopBar button to start chat
+        rightButtons.push({
+          enabled: true,
+          id: buttons.startChat.id,
+          text: buttons.startChat.text,
+          color: '#fff'
+        });
+
+        Navigation.mergeOptions(props.componentId, {
+          topBar: {
+            rightButtons
+          }
+        });
+
+        setPreChatResponse(null);
+        dispatch({type: ActionType.SET_CHAT_STARTED, payload: false});
+        dispatch({type: ActionType.SET_MESSAGES, payload: GiftedChat.append([], [])});
+        dispatch({type: ActionType.SET_AGENT_END_SESSION_EVENT, payload: false});
+        return;
+      }
+
       await chatSDK!.endChat();
 
       const rightButtons: any = [];
@@ -158,6 +195,25 @@ const ChatScreen = (props: ChatScreenProps) => {
     // Handles clicking start chat button
     if (buttonId === buttons.startChat.id) {
       console.info('[ClickStartChat]');
+
+      if (useACS) {
+        // Switch TopBar button to end chat
+        Navigation.mergeOptions(props.componentId, {
+          topBar: {
+            rightButtons: [{
+              enabled: true,
+              id: buttons.endChat.id,
+              text: buttons.endChat.text,
+              color: '#fff'
+            }],
+          }
+        });
+
+        dispatch({type: ActionType.SET_CHAT_STARTED, payload: true});
+        dispatch({type: ActionType.SET_AGENT_END_SESSION_EVENT, payload: false});
+        return;
+      }
+
       await chatSDK!.startChat();
       chatSDK!.onNewMessage(onNewMessage);
       chatSDK!.onTypingEvent(onTypingEvent);
@@ -187,6 +243,10 @@ const ChatScreen = (props: ChatScreenProps) => {
       console.info(`[omnichannelConfig]`);
       console.info(omnichannelConfig);
 
+      if (useACS) {
+        return;
+      }
+
       const chatSDK = new OmnichannelChatSDK(omnichannelConfig);
       await chatSDK.initialize();
       setChatSDK(chatSDK);
@@ -205,6 +265,24 @@ const ChatScreen = (props: ChatScreenProps) => {
 
   const startNewChat = useCallback(async (optionalParams = {}) => {
     console.info('[StartNEWChat]');
+
+    if (useACS) {
+      // Switch TopBar button to end chat
+      Navigation.mergeOptions(props.componentId, {
+        topBar: {
+          rightButtons: [{
+            enabled: true,
+            id: buttons.endChat.id,
+            text: buttons.endChat.text,
+            color: '#fff'
+          }],
+        }
+      });
+
+      dispatch({type: ActionType.SET_CHAT_STARTED, payload: true});
+      return;
+    }
+
     await chatSDK!.startChat(optionalParams);
     chatSDK!.onNewMessage(onNewMessage);
     chatSDK!.onTypingEvent(onTypingEvent);
@@ -245,6 +323,10 @@ const ChatScreen = (props: ChatScreenProps) => {
       return;
     }
 
+    if (useACS) {
+      return;
+    }
+
     // console.info(outboundMessages);
     const outboundMessage = outboundMessages[0];
     const messageId = outboundMessage._id;
@@ -282,6 +364,10 @@ const ChatScreen = (props: ChatScreenProps) => {
       return;
     }
 
+    if (useACS) {
+      return;
+    }
+
     console.info('[SendTyping]');
     try {
       await chatSDK?.sendTypingEvent();
@@ -309,6 +395,10 @@ const ChatScreen = (props: ChatScreenProps) => {
   const onAttachmentUpload = useCallback(async () => {
     // Handles file attachment uploads
     const { messages } = state;
+
+    if (useACS) {
+      return;
+    }
 
     try {
       const fileResult = await DocumentPicker.pick({
@@ -405,6 +495,10 @@ const ChatScreen = (props: ChatScreenProps) => {
       return;
     }
 
+    if (useACS) {
+      return;
+    }
+
     const body = {
       emailAddress: email,
       attachmentMessage: 'Sample Message',
@@ -427,6 +521,10 @@ const ChatScreen = (props: ChatScreenProps) => {
     const {hasChatStarted} = state;
 
     if (!hasChatStarted) {
+      return;
+    }
+
+    if (useACS) {
       return;
     }
 
