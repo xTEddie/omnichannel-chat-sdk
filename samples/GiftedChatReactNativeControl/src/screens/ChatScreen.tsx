@@ -14,6 +14,7 @@ import { useDidAppearListener, useNavigationButtonPressedListener } from '../uti
 import { parseTranscript } from '../utils/parser';
 import attachementImage from '../assets/img/attachment.png';
 import fetchOmnichannelConfig from '../utils/fetchOmnichannelConfig';
+import createChatSDK from '../utils/createChatSDK';
 
 const useACS = false;
 const omnichannelConfig = fetchOmnichannelConfig(useACS);
@@ -58,7 +59,7 @@ const patchAdaptiveCard = (adaptiveCard: any) => {
 
 const ChatScreen = (props: ChatScreenProps) => {
   const {state, dispatch} = useContext(Store);
-  const [chatSDK, setChatSDK] = useState<OmnichannelChatSDK>();
+  const [chatSDK, setChatSDK] = useState<OmnichannelChatSDK | any>();
   const [preChatSurvey, setPreChatSurvey] = useState(null);
   const [preChatResponse, setPreChatResponse] = useState(null);
 
@@ -243,7 +244,10 @@ const ChatScreen = (props: ChatScreenProps) => {
       console.info(`[omnichannelConfig]`);
       console.info(omnichannelConfig);
 
+      // TODO: Fix import errors
       if (useACS) {
+        // const chatSDK = createChatSDK(omnichannelConfig);
+        // setChatSDK(chatSDK);
         return;
       }
 
