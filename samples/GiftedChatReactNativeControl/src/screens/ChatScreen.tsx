@@ -145,6 +145,8 @@ const ChatScreen = (props: ChatScreenProps) => {
     if (buttonId === buttons.endChat.id) {
 
       if (useACS) {
+        await chatSDK!.endChat();
+
         const rightButtons: any = [];
 
         // Switch TopBar button to start chat
@@ -199,6 +201,9 @@ const ChatScreen = (props: ChatScreenProps) => {
       console.info('[ClickStartChat]');
 
       if (useACS) {
+
+        await chatSDK!.startChat();
+
         // Switch TopBar button to end chat
         Navigation.mergeOptions(props.componentId, {
           topBar: {
@@ -245,10 +250,9 @@ const ChatScreen = (props: ChatScreenProps) => {
       console.info(`[omnichannelConfig]`);
       console.info(omnichannelConfig);
 
-      // TODO: Fix import errors
       if (useACS) {
-        // const chatSDK = createChatSDK(omnichannelConfig);
-        // setChatSDK(chatSDK);
+        const chatSDK = await createChatSDK(omnichannelConfig);
+        setChatSDK(chatSDK);
         return;
       }
 
@@ -272,6 +276,9 @@ const ChatScreen = (props: ChatScreenProps) => {
     console.info('[StartNEWChat]');
 
     if (useACS) {
+      await chatSDK!.startChat();
+      chatSDK!.onNewMessage(onNewMessage);
+
       // Switch TopBar button to end chat
       Navigation.mergeOptions(props.componentId, {
         topBar: {
