@@ -1,3 +1,4 @@
+import 'node-libs-react-native/globals';
 import { IFileInfo, IRawMessage, isSystemMessage, OmnichannelChatSDK, uuidv4 } from '@microsoft/omnichannel-chat-sdk';
 import AdaptiveCard from "adaptivecards-reactnative";
 import { Buffer } from 'buffer';
