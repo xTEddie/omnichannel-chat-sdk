@@ -17,7 +17,7 @@ import attachementImage from '../assets/img/attachment.png';
 import fetchOmnichannelConfig from '../utils/fetchOmnichannelConfig';
 import createChatSDK from '../utils/createChatSDK';
 
-const useACS = false;
+const useACS = true;
 const omnichannelConfig = fetchOmnichannelConfig(useACS);
 
 const typingAnimationDuration = 1500;
