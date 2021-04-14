@@ -2,6 +2,9 @@
 import {OmnichannelChatSDK} from '@microsoft/omnichannel-chat-sdk';
 import { ChatClient } from '@azure/communication-chat';
 import { AzureCommunicationTokenCredential } from '@azure/communication-common';
+// import { CommunicationSignalingClient } from "@azure/communication-signaling";
+// import { createClientLogger } from "@azure/logger";
+import { EventEmitter } from 'events';
 
 const acsResourceEndpoint = "https://{0}-Trial-acs.communication.azure.com";
 
@@ -11,10 +14,16 @@ class ChatSDKProxy {
     private chatAdapterConfig: any;
     private chatClient: any;
     private chatThreadClient: any;
+    private allMessages: any;
+    private eventEmitter: any;
+    private participantsMapping: any;
 
     public constructor(private proxy: any) {
         this.debug = false;
         this.chatToken = {};
+        this.allMessages = [];
+        this.eventEmitter = new EventEmitter();
+        this.participantsMapping = {};
         this.initialize();
         this.setDebug(true);
     }
@@ -67,18 +76,63 @@ class ChatSDKProxy {
         }
 
         const tokenCredential = new AzureCommunicationTokenCredential(this.chatToken.token);
-        this.chatClient = new ChatClient(this.chatAdapterConfig.environmentUrl, tokenCredential);
 
-        const thread = await this.chatClient.getChatThread(this.chatAdapterConfig.threadId);
-        this.debug && console.log(`[ChatSDKProxy][thread]`);
-        this.debug && console.log(thread);
+        try {
+            this.chatClient = new ChatClient(this.chatAdapterConfig.environmentUrl, tokenCredential);
+            // this.chatClient.signalingClient = new CommunicationSignalingClient(tokenCredential, createClientLogger("communication-chat"));
+            this.debug && console.log(`[ChatSDKProxy][chatClient]`);
 
-        this.chatThreadClient = await this.chatClient.getChatThreadClient(this.chatAdapterConfig.threadId);
-        this.debug && console.log(`[ChatSDKProxy][chatThreadClient]`);
-        this.debug && console.log(this.chatThreadClient);
+            // Mock method to avoid 'Error: Realtime notifications are only supported in the browser.'
+            this.chatClient.on = (event: string, listener: any) => {
+                console.log('[ChatSDKProxy][chatClient][on]');
+                console.log(event);
+                console.log(listener);
+            };
+        } catch {
+            this.debug && console.log(`[ChatSDKProxy][chatClient] Failed`);
+        }
+
+        try {
+            const thread = await this.chatClient.getChatThread(this.chatAdapterConfig.threadId);
+            // this.debug && console.log(`[ChatSDKProxy][thread]`);
+            // this.debug && console.log(thread);
+        } catch {
+            this.debug && console.log(`[ChatSDKProxy][thread] Failed`);
+        }
+
+        try {
+            this.chatThreadClient = await this.chatClient.getChatThreadClient(this.chatAdapterConfig.threadId);
+            // this.debug && console.log(`[ChatSDKProxy][chatThreadClient]`);
+            // this.debug && console.log(this.chatThreadClient);
+        } catch {
+            this.debug && console.log(`[ChatSDKProxy][chatThreadClient] Failed`);
+        }
+
+        const participants = await this.listParticipants();
+        this.createParticipantSMapping(participants);
 
         // Subscribes to real time notifications
-        await this.chatClient.startRealtimeNotifications();
+        await this.chatClient.startRealtimeNotifications(); // WebSocket
+        //await this.startNonRealtimeNotifications(); // HTTP Call Polling
+        // await this.getMessages();
+    }
+
+    public async startNonRealtimeNotifications() {
+        this.debug && console.log(`[ChatSDKProxy][startNonRealtimeNotifications]`);
+        const ms = 1 * 1000;
+        setInterval( async () => {
+            try {
+                const messages = await this.getMessages(true);
+                if (this.allMessages.length !== messages.length) {
+                    this.allMessages = messages;
+                    console.log(`[ChatSDKProxy][NonRealtimeNotifcation][NewMessage]`);
+                    console.log(messages[0]);
+                    this.eventEmitter.emit('chatMessageReceived', messages[0]);
+                }
+            } catch {
+
+            }
+        }, ms);
     }
 
     public async endChat() {
@@ -90,6 +144,8 @@ class ChatSDKProxy {
             this.chatAdapterConfig = {};
             this.chatClient = null;
             this.chatThreadClient = null;
+            this.allMessages = [];
+            this.participantsMapping = {};
         } catch (error) {
             console.error(`[ChatSDKProxy][endChat][sessionClose][error] ${error}`);
             return error;
@@ -145,8 +201,8 @@ class ChatSDKProxy {
         return this.chatToken;
     }
 
-    public async getMessages() {
-        this.debug && console.log(`[ChatSDKProxy][getMessages]`);
+    public async getMessages(notifications = false) {
+        this.debug && !notifications && console.log(`[ChatSDKProxy][getMessages]`);
 
         const messages: any = [];
         const pagedAsyncIterableIterator = await this.chatThreadClient.listMessages();
@@ -183,18 +239,21 @@ class ChatSDKProxy {
     }
 
     public onNewMessage(onNewMessageCallback: CallableFunction) {
-        this.chatClient.on("chatMessageReceived", (message: any) => {
+        // this.chatClient.on("chatMessageReceived", (message: any) => {
+        this.eventEmitter.addListener("chatMessageReceived", (message: any) => {
             this.debug && console.log('[ChatSDKProxy][Event][chatMessageReceived]');
             this.debug && console.log(message);
 
-            const {sender, recipient} = message;
+            const {sender} = message;
 
+            // console.log(`[this.chatAdapterConfig.id] ${this.chatAdapterConfig.id}`);
             // Filter out customer messages
-            const customerMessageCondition = (sender.user.communicationUserId === recipient.communicationUserId) || (sender.user.communicationUserId === this.chatAdapterConfig.id)
+            const customerMessageCondition = (sender.communicationUserId === this.chatAdapterConfig.id)
             if (customerMessageCondition) {
                 return;
             }
 
+            console.log(`[ChatSDKProxy][Event][chatMessageReceived][onNewMessageCallback]`)
             onNewMessageCallback(message);
         });
     }
@@ -238,6 +297,63 @@ class ChatSDKProxy {
         this.debug && console.log(`[ChatSDKProxy][getVoiceVideoCalling]`);
         // return this.proxy.getVoiceVideoCalling(params);
     }
+
+    public async listParticipants() {
+        const participants = [];
+        const pagedAsyncIterableIterator = await this.chatThreadClient.listParticipants();
+        let next = await pagedAsyncIterableIterator.next();
+        while (!next.done) {
+           let user = next.value;
+           participants.push(user);
+           next = await pagedAsyncIterableIterator.next();
+        }
+        return participants;
+    }
+
+    public isSystemMessage(message: any) {
+        console.log(`[ChatSDKProxy][isSystemMessage]`);
+        const {sender} = message;
+        const {communicationUserId} = sender;
+
+        const participant = this.participantsMapping[communicationUserId];
+
+        console.log(participant);
+
+        if (!participant) {
+            return false;
+        }
+
+        console.log(participant);
+
+        return participant.displayName === '__system__';
+    }
+
+    public isAgentMessage(message: any) {
+        const {sender} = message;
+        const {communicationUserId} = sender;
+
+        const participant = this.participantsMapping[communicationUserId];
+
+        if (!participant) {
+            return false;
+        }
+
+        return participant.displayName === '__agent__';
+    }
+
+    private createParticipantSMapping(participants: any) {
+        this.debug && console.log(`[ChatSDKProxy][createParticipantSMapping]`);
+        const mapping: any = {};
+        for (const participant of participants) {
+            const {user} = participant;
+            const {communicationUserId} = user;
+            if (!(communicationUserId in mapping)) {
+                mapping[communicationUserId] = participant;
+            }
+        }
+
+        this.participantsMapping = mapping;
+    }
 }
 
 const createChatSDK = async (omnichannelConfig: any, chatSDKConfig: any = {}) => {
@@ -246,7 +362,7 @@ const createChatSDK = async (omnichannelConfig: any, chatSDKConfig: any = {}) =>
     const chatConfig: any = await chatSDK.getLiveChatConfig();
 
     const {LiveChatVersion: liveChatVersion} = chatConfig;
-    console.log(chatConfig);
+    // console.log(chatConfig);
     console.log(`[ChatSDKProxy][LiveChatVersion] ${liveChatVersion}`);
 
     if (liveChatVersion === 1) {
