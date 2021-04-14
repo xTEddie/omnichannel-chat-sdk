@@ -64,15 +64,41 @@ const ChatScreen = (props: ChatScreenProps) => {
   const [preChatSurvey, setPreChatSurvey] = useState(null);
   const [preChatResponse, setPreChatResponse] = useState(null);
 
-  const onNewMessage = useCallback(async (message: IRawMessage) => {
-    console.log(`[onNewMessage] Received message: '${message.content}'`);
+  const onNewMessage = useCallback(async (message: any) => {
     // console.log(message);
+    const { messages } = state;
 
     if (useACS) {
+      console.log(`[ChatScreen][onNewMessage]`);
+      console.log(`[onNewMessage] Received message: '${message.content.message}'`);
+      const agentName = 'Agent';
+      const giftedChatMessage = {
+        _id: message.id,
+        text: message.content.message,
+        createdAt: new Date(),
+        system: chatSDK.isSystemMessage(message),
+        // received: true,
+        // sent: true,
+        user: {
+          _id: 1,
+          name: agentName || 'Agent',
+          avatar: 'https://placeimg.com/140/140/people'
+        }
+      }
+
+      const extraMetaData = {
+        isSystemMessage: false,
+        isAgentMessage: false,
+        isAttachment: false
+      };
+
+      messages.unshift({...giftedChatMessage, ...extraMetaData});
+      dispatch({type: ActionType.SET_MESSAGES, payload: messages});
+
       return;
     }
 
-    const { messages } = state;
+    console.log(`[onNewMessage] Received message: '${message.content}'`);
     const giftedChatMessage: any = createGiftedChatMessage(message);
     const extraMetaData = {
       isSystemMessage: false,
@@ -336,6 +362,26 @@ const ChatScreen = (props: ChatScreenProps) => {
     }
 
     if (useACS) {
+      const outboundMessage = outboundMessages[0];
+      const messageId = outboundMessage._id;
+      const messageToSend = {
+        content: outboundMessage.text
+      };
+
+      try {
+        await chatSDK?.sendMessage(messageToSend);
+        const extraMetaData = {
+          isSystemMessage: false,
+          isAgentMessage: false,
+          isAttachment: false
+        };
+        outboundMessage.sent = true;
+        messages.unshift({...outboundMessage, ...extraMetaData});
+        dispatch({type: ActionType.SET_MESSAGES, payload: messages});
+      } catch {
+        console.error(`Failed to send message '${outboundMessage.text}' with _id ${messageId}`);
+      }
+
       return;
     }
 
