@@ -70,11 +70,11 @@ const ChatScreen = (props: ChatScreenProps) => {
 
     if (useACS) {
       console.log(`[ChatScreen][onNewMessage]`);
-      console.log(`[onNewMessage] Received message: '${message.content.message}'`);
+      console.log(`[onNewMessage] Received message: '${message.message}'`);
       const agentName = 'Agent';
       const giftedChatMessage = {
         _id: message.id,
-        text: message.content.message,
+        text: message.message,
         createdAt: new Date(),
         system: chatSDK.isSystemMessage(message),
         // received: true,

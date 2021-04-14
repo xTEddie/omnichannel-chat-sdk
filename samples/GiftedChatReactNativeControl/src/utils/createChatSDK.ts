@@ -5,6 +5,7 @@ import { AzureCommunicationTokenCredential } from '@azure/communication-common';
 // import { CommunicationSignalingClient } from "@azure/communication-signaling";
 // import { createClientLogger } from "@azure/logger";
 import { EventEmitter } from 'events';
+import { ChatMessageReceivedEvent } from '@azure/communication-signaling';
 
 const acsResourceEndpoint = "https://{0}-Trial-acs.communication.azure.com";
 
@@ -83,22 +84,22 @@ class ChatSDKProxy {
             this.debug && console.log(`[ChatSDKProxy][chatClient]`);
 
             // Mock method to avoid 'Error: Realtime notifications are only supported in the browser.'
-            this.chatClient.on = (event: string, listener: any) => {
-                console.log('[ChatSDKProxy][chatClient][on]');
-                console.log(event);
-                console.log(listener);
-            };
+            // this.chatClient.on = (event: string, listener: any) => {
+            //     console.log('[ChatSDKProxy][chatClient][on]');
+            //     console.log(event);
+            //     console.log(listener);
+            // };
         } catch {
             this.debug && console.log(`[ChatSDKProxy][chatClient] Failed`);
         }
 
-        try {
-            const thread = await this.chatClient.getChatThread(this.chatAdapterConfig.threadId);
-            // this.debug && console.log(`[ChatSDKProxy][thread]`);
-            // this.debug && console.log(thread);
-        } catch {
-            this.debug && console.log(`[ChatSDKProxy][thread] Failed`);
-        }
+        // try {
+        //     const thread = await this.chatClient.getChatThread(this.chatAdapterConfig.threadId);
+        //     // this.debug && console.log(`[ChatSDKProxy][thread]`);
+        //     // this.debug && console.log(thread);
+        // } catch {
+        //     this.debug && console.log(`[ChatSDKProxy][thread] Failed`);
+        // }
 
         try {
             this.chatThreadClient = await this.chatClient.getChatThreadClient(this.chatAdapterConfig.threadId);
@@ -108,8 +109,8 @@ class ChatSDKProxy {
             this.debug && console.log(`[ChatSDKProxy][chatThreadClient] Failed`);
         }
 
-        const participants = await this.listParticipants();
-        this.createParticipantSMapping(participants);
+        // const participants = await this.listParticipants();
+        // this.createParticipantSMapping(participants);
 
         // Subscribes to real time notifications
         await this.chatClient.startRealtimeNotifications(); // WebSocket
@@ -239,10 +240,10 @@ class ChatSDKProxy {
     }
 
     public onNewMessage(onNewMessageCallback: CallableFunction) {
-        // this.chatClient.on("chatMessageReceived", (message: any) => {
-        this.eventEmitter.addListener("chatMessageReceived", (message: any) => {
+        this.chatClient.on("chatMessageReceived", (message: any) => {
+        // this.eventEmitter.addListener("chatMessageReceived", (message: any) => {
             this.debug && console.log('[ChatSDKProxy][Event][chatMessageReceived]');
-            this.debug && console.log(message);
+            // this.debug && console.log(message);
 
             const {sender} = message;
 
@@ -253,7 +254,8 @@ class ChatSDKProxy {
                 return;
             }
 
-            console.log(`[ChatSDKProxy][Event][chatMessageReceived][onNewMessageCallback]`)
+            console.log(`[ChatSDKProxy][Event][chatMessageReceived][onNewMessageCallback]`);
+            this.debug && console.log(message);
             onNewMessageCallback(message);
         });
     }
