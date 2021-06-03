@@ -1,4 +1,4 @@
-import IChatSDKConfig, { IDataMaskingSDKConfig } from "../core/IChatSDKConfig";
+import IChatSDKConfig, { IDataMaskingSDKConfig, PersistentChatConfig } from "../core/IChatSDKConfig";
 import {ariaTelemetryKey} from "../config/settings";
 
 const defaultChatSDKConfig: IChatSDKConfig = {
@@ -9,6 +9,10 @@ const defaultChatSDKConfig: IChatSDKConfig = {
     telemetry: {
         disable: false,
         ariaTelemetryKey
+    },
+    persistenChat: {
+        disable: true,
+        tokenUpdateTime: 21600000
     }
 };
 
