@@ -22,7 +22,7 @@ interface IChatSDKConfig {
     getAuthToken?: () => Promise<string|null>,
     ic3Config?: IC3Config,
     chatAdapterConfig?: ChatAdapterConfig,
-    persistenChat?: PersistentChatConfig
+    persistentChat?: PersistentChatConfig
 }
 
 export {
