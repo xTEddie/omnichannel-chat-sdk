@@ -327,6 +327,14 @@ class OmnichannelChatSDK {
             sessionCloseOptionalParams.authenticatedUserToken = this.authenticatedUserToken;
         }
 
+        if (this.isPersistentChat) {
+            sessionCloseOptionalParams.isPersistentChat = true;
+        }
+
+        if (this.reconnectId) {
+            this.requestId = this.reconnectId;
+        }
+
         try {
             await this.OCClient.sessionClose(this.requestId, sessionCloseOptionalParams);
 
