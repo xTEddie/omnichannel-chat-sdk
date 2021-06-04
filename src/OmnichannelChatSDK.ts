@@ -256,6 +256,10 @@ class OmnichannelChatSDK {
             sessionInitOptionalParams.authenticatedUserToken = this.authenticatedUserToken;
         }
 
+        if (this.isPersistentChat && this.reconnectId) {
+            sessionInitOptionalParams.reconnectId = this.reconnectId
+        }
+
         try {
             await this.OCClient.sessionInit(this.requestId, sessionInitOptionalParams);
         } catch (error) {
@@ -448,6 +452,11 @@ class OmnichannelChatSDK {
                 if (this.authenticatedUserToken) {
                     getChatTokenOptionalParams.authenticatedUserToken = this.authenticatedUserToken;
                 }
+
+                if (this.isPersistentChat && this.reconnectId) {
+                    getChatTokenOptionalParams.reconnectId = this.reconnectId;
+                }
+
                 const chatToken = await this.OCClient.getChatToken(this.requestId, getChatTokenOptionalParams);
                 const {ChatId: chatId, Token: token, RegionGtms: regionGtms, ExpiresIn: expiresIn, VisitorId: visitorId, VoiceVideoCallToken: voiceVideoCallToken} = chatToken;
                 this.chatToken = {
