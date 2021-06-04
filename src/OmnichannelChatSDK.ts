@@ -76,6 +76,7 @@ class OmnichannelChatSDK {
     private ic3ClientLogger: IC3ClientLogger | null = null;
     private ocSdkLogger: OCSDKLogger | null = null;
     private isPersistentChat = false;
+    private reconnectId: string | null = null;
 
     constructor(omnichannelConfig: IOmnichannelConfig, chatSDKConfig: IChatSDKConfig = defaultChatSDKConfig) {
         this.debug = false;
@@ -155,6 +156,24 @@ class OmnichannelChatSDK {
         this.scenarioMarker.startScenario(TelemetryEvent.StartChat, {
             RequestId: this.requestId
         });
+
+        if (this.isPersistentChat) {
+            try {
+                const response = await this.OCClient.getReconnectableChats({
+                    authenticatedUserToken: this.authenticatedUserToken
+                });
+
+                if (response?.reconnectId) {
+                    this.reconnectId = response.reconnectId;
+                }
+            } catch {
+                const exceptionDetails = {
+                    response: "OCClientGetReconnectableChatsFailed"
+                }
+
+                throw Error(exceptionDetails.response);
+            }
+        }
 
         if (optionalParams.liveChatContext) {
             this.chatToken = optionalParams.liveChatContext.chatToken || {};
