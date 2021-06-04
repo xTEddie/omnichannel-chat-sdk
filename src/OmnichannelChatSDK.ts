@@ -163,8 +163,8 @@ class OmnichannelChatSDK {
                     authenticatedUserToken: this.authenticatedUserToken
                 });
 
-                if (response?.reconnectId) {
-                    this.reconnectId = response.reconnectId;
+                if (response?.reconnectid) {
+                    this.reconnectId = response.reconnectid;
                 }
             } catch {
                 const exceptionDetails = {
