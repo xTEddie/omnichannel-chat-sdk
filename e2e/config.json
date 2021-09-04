@@ -1,0 +1,14 @@
+{
+    "crmUrl": "",
+    "orgId": "",
+    "orgUrl": "",
+    "widgetIds": {
+        "liveChat": "",
+        "authChat": "",
+        "proactiveChat": "",
+        "persistentChat": "",
+        "authChatReconnect": "",
+        "unauthChatReconnect": "",
+        "operatingHours": ""
+    }
+}
