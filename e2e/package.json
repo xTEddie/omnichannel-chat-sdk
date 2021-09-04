@@ -4,8 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest -c jest.config.js"
   },
   "author": "Microsoft Corporation",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^27.1.0",
+    "jest-playwright-preset": "^1.7.0",
+    "playwright": "^1.14.1"
+  }
 }
