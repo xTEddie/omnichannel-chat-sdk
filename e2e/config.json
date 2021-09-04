@@ -10,5 +10,6 @@
         "authChatReconnect": "",
         "unauthChatReconnect": "",
         "operatingHours": ""
-    }
+    },
+    "getAuthTokenUrl": ""
 }
