@@ -9,6 +9,7 @@
   "author": "Microsoft Corporation",
   "license": "MIT",
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "jest": "^27.1.0",
     "jest-playwright-preset": "^1.7.0",
     "playwright": "^1.14.1",
