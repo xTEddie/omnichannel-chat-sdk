@@ -101,6 +101,7 @@ class OmnichannelChatSDK {
     private authSettings: AuthSettings | null = null;
     private authenticatedUserToken: string | null = null;
     private preChatSurvey: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    private canUploadAttachment: boolean;
     private conversation: IConversation | ACSConversation | null = null;
     private callingOption: CallingOptionsOptionSetNumber = CallingOptionsOptionSetNumber.NoCalling;
     private telemetry: typeof AriaTelemetry | null = null;
@@ -131,6 +132,7 @@ class OmnichannelChatSDK {
         this.dataMaskingRules = {};
         this.authSettings = null;
         this.preChatSurvey = null;
+        this.canUploadAttachment = false;
         this.telemetry = createTelemetry(this.debug);
         this.scenarioMarker = new ScenarioMarker(this.omnichannelConfig);
         this.ic3ClientLogger = createIC3ClientLogger(this.omnichannelConfig);
@@ -1206,6 +1208,21 @@ class OmnichannelChatSDK {
             ChatId: this.chatToken.chatId as string
         });
 
+        if (!this.canUploadAttachment) {
+            const exceptionDetails: ChatSDKExceptionDetails = {
+                response: "FeatureDisabled",
+                message: 'File attachments for customers is disabled'
+            };
+
+            this.scenarioMarker.failScenario(TelemetryEvent.UploadFileAttachment, {
+                RequestId: this.requestId,
+                ChatId: this.chatToken.chatId as string,
+                ExceptionDetails: JSON.stringify(exceptionDetails)
+            });
+
+            throw Error(exceptionDetails.response);
+        }
+
         if (this.liveChatVersion === LiveChatVersion.V2) {
             const createObjectResponse: any = await this.AMSClient?.createObject(this.chatToken?.chatId as string, fileInfo as any);  // eslint-disable-line @typescript-eslint/no-explicit-any
             const documentId = createObjectResponse.id;
@@ -1760,9 +1777,13 @@ class OmnichannelChatSDK {
                 this.authSettings = authSettings;
             }
 
-            const {PreChatSurvey: preChatSurvey, msdyn_prechatenabled, msdyn_callingoptions, msdyn_conversationmode, msdyn_enablechatreconnect} = liveWSAndLiveChatEngJoin;
+            const {PreChatSurvey: preChatSurvey, msdyn_prechatenabled, msdyn_enablefileattachmentsforcustomers, msdyn_callingoptions, msdyn_conversationmode, msdyn_enablechatreconnect} = liveWSAndLiveChatEngJoin;
             const isPreChatEnabled = msdyn_prechatenabled === true || msdyn_prechatenabled == "true";
             const isChatReconnectEnabled = msdyn_enablechatreconnect === true || msdyn_enablechatreconnect == "true";
+
+            if (msdyn_enablefileattachmentsforcustomers == "true") {
+                this.canUploadAttachment = true;
+            }
 
             if (msdyn_conversationmode?.toString() === ConversationMode.PersistentChat.toString()) {
                 this.isPersistentChat = true;
