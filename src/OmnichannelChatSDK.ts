@@ -101,7 +101,7 @@ class OmnichannelChatSDK {
     private authSettings: AuthSettings | null = null;
     private authenticatedUserToken: string | null = null;
     private preChatSurvey: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-    private canUploadAttachment: boolean;
+    private enableAttachmentUpload: boolean;
     private conversation: IConversation | ACSConversation | null = null;
     private callingOption: CallingOptionsOptionSetNumber = CallingOptionsOptionSetNumber.NoCalling;
     private telemetry: typeof AriaTelemetry | null = null;
@@ -132,7 +132,7 @@ class OmnichannelChatSDK {
         this.dataMaskingRules = {};
         this.authSettings = null;
         this.preChatSurvey = null;
-        this.canUploadAttachment = false;
+        this.enableAttachmentUpload = false;
         this.telemetry = createTelemetry(this.debug);
         this.scenarioMarker = new ScenarioMarker(this.omnichannelConfig);
         this.ic3ClientLogger = createIC3ClientLogger(this.omnichannelConfig);
@@ -1208,7 +1208,7 @@ class OmnichannelChatSDK {
             ChatId: this.chatToken.chatId as string
         });
 
-        if (!this.canUploadAttachment) {
+        if (!this.enableAttachmentUpload) {
             const exceptionDetails: ChatSDKExceptionDetails = {
                 response: "FeatureDisabled",
                 message: 'File attachments for customers is disabled'
@@ -1782,7 +1782,7 @@ class OmnichannelChatSDK {
             const isChatReconnectEnabled = msdyn_enablechatreconnect === true || msdyn_enablechatreconnect == "true";
 
             if (msdyn_enablefileattachmentsforcustomers == "true") {
-                this.canUploadAttachment = true;
+                this.enableAttachmentUpload = true;
             }
 
             if (msdyn_conversationmode?.toString() === ConversationMode.PersistentChat.toString()) {
