@@ -1,7 +1,6 @@
 import {SDKProvider as OCSDKProvider, uuidv4} from "@microsoft/ocsdk";
 import { defaultLocaleId, defaultLocaleString, getLocaleIdFromString, getLocaleStringFromId } from "./utils/locale";
 import { isCustomerMessage, isSystemMessage } from "./utils/utilities";
-
 import ChatSDKMessage from "./core/messaging/ChatSDKMessage";
 import DeliveryMode from "@microsoft/omnichannel-ic3core/lib/model/DeliveryMode";
 import {SDKProvider as IC3SDKProvider} from '@microsoft/omnichannel-ic3core';
@@ -11,6 +10,7 @@ import MessageContentType from "@microsoft/omnichannel-ic3core/lib/model/Message
 import MessageType from "@microsoft/omnichannel-ic3core/lib/model/MessageType";
 import OmnichannelChatSDK from "./OmnichannelChatSDK";
 import PersonType from "@microsoft/omnichannel-ic3core/lib/model/PersonType";
+import getLocalTelemetryCollector from "./utils/getLocalTelemetryCollector";
 
 export {
     OmnichannelChatSDK,
@@ -29,7 +29,8 @@ export {
     getLocaleStringFromId,
     getLocaleIdFromString,
     defaultLocaleId,
-    defaultLocaleString
+    defaultLocaleString,
+    getLocalTelemetryCollector
 }
 
 export default {
