@@ -29,12 +29,23 @@ const removeElementById = (id: string): void => {
   document.getElementById(id)?.remove();
 }
 
+const downloadJson = (jsonData: any, fileName = 'data.json'): void => {  // eslint-disable-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
+  const jsonDataPrefix = 'data:text/json;charset=utf-8'
+  const data = `${jsonDataPrefix},${encodeURIComponent(JSON.stringify(jsonData))}`;
+  const anchorElement = document.createElement('a');
+  anchorElement.setAttribute("href", data);
+  anchorElement.setAttribute("download", fileName);
+  anchorElement.click();
+}
+
 export default {
   loadScript,
-  removeElementById
+  removeElementById,
+  downloadJson
 }
 
 export {
   loadScript,
-  removeElementById
+  removeElementById,
+  downloadJson
 }
