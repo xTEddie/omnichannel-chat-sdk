@@ -5,6 +5,8 @@ import LogLevel from '../telemetry/LogLevel';
 import ScenarioType from '../telemetry/ScenarioType';
 import { ic3ClientVersion, webChatACSAdapterVersion } from '../config/settings';
 import { isBrowser, isReactNative } from '../utils/platform';
+import getLocalTelemetryCollector from '../utils/getLocalTelemetryCollector';
+import LocalTelemetryCollector from './LocalTelemetryCollector';
 
 interface BaseContract {
     ChatSDKRuntimeId: string;
@@ -120,6 +122,7 @@ class AriaTelemetry {
     private static _debug = false;
     private static _CDNPackagesInfo: CDNPackagesInfo;
     private static _disable = false;
+    private static _localTelemetryCollector: LocalTelemetryCollector = getLocalTelemetryCollector();
 
     public static initialize(key: string): void {
         /* istanbul ignore next */
@@ -226,6 +229,7 @@ class AriaTelemetry {
         this._debug && console.log(event.properties.Event);
 
         !AriaTelemetry._disable && AriaTelemetry.logger?.logEvent(event);
+        AriaTelemetry._localTelemetryCollector.pushTelemetryEvent(event);
     }
 
     public static debug(properties: AWTEventData["properties"], scenarioType: ScenarioType = ScenarioType.EVENTS): void {
@@ -309,6 +313,7 @@ class AriaTelemetry {
         this._debug && console.log(event.properties.Event);
 
         !AriaTelemetry._disable && AriaTelemetry.logger?.logEvent(event);
+        AriaTelemetry._localTelemetryCollector.pushTelemetryEvent(event);
     }
 
     public static warn(properties: AWTEventData["properties"], scenarioType: ScenarioType = ScenarioType.EVENTS): void {
@@ -392,6 +397,7 @@ class AriaTelemetry {
         this._debug && console.log(event.properties.Event);
 
         !AriaTelemetry._disable && AriaTelemetry.logger?.logEvent(event);
+        AriaTelemetry._localTelemetryCollector.pushTelemetryEvent(event);
     }
 
     public static error(properties: AWTEventData["properties"], scenarioType: ScenarioType = ScenarioType.EVENTS): void {
@@ -475,6 +481,7 @@ class AriaTelemetry {
         this._debug && console.log(event.properties.Event);
 
         !AriaTelemetry._disable && AriaTelemetry.logger?.logEvent(event);
+        AriaTelemetry._localTelemetryCollector.pushTelemetryEvent(event);
     }
 
     public static log(properties: AWTEventData["properties"], scenarioType: ScenarioType = ScenarioType.EVENTS): void {
@@ -558,6 +565,7 @@ class AriaTelemetry {
         this._debug && console.log(event.properties.Event);
 
         !AriaTelemetry._disable && AriaTelemetry.logger?.logEvent(event);
+        AriaTelemetry._localTelemetryCollector.pushTelemetryEvent(event);
     }
 
     private static get logger(): AWTLogger {
