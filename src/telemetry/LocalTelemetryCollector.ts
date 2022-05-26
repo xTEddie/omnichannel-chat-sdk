@@ -34,7 +34,8 @@ class LocalTelemetryCollector {
 
     public dumpLogs(): any {  // eslint-disable-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
         const logs = {
-            telemetry: this.localTelemetryEvents
+            telemetry: this.localTelemetryEvents,
+            webPagePerformance: this.getWebPagePerformanceLogs()
         };
 
         return logs;
@@ -49,6 +50,14 @@ class LocalTelemetryCollector {
         const logs = this.dumpLogs();
 
         WebUtils.downloadJson(logs, fileName);
+    }
+
+    private getWebPagePerformanceLogs(): any {  // eslint-disable-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
+        if (platform.isNode() || platform.isReactNative()) {
+            return {};
+        }
+
+        return window?.performance?.getEntries();
     }
 }
 
