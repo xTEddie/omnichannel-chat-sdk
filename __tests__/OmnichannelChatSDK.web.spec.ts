@@ -31,6 +31,42 @@ describe('Omnichannel Chat SDK (Web)', () => {
         jest.spyOn(platform, 'isBrowser').mockReturnValue(false);
     });
 
+    it('ChatSDK.startChat() with sendDefaultInitContext should pass getContext to OCClient.sessionInit()', async () => {
+        const chatSDK = new OmnichannelChatSDK(omnichannelConfig);
+        chatSDK.getChatConfig = jest.fn();
+
+        await chatSDK.initialize();
+
+        chatSDK.IC3Client = {
+            initialize: jest.fn(),
+            joinConversation: jest.fn()
+        }
+
+        const optionalParams = {
+            sendDefaultInitContext: true
+        }
+
+        jest.spyOn(chatSDK.OCClient, 'getChatToken').mockResolvedValue(Promise.resolve({
+            ChatId: '',
+            Token: '',
+            RegionGtms: '{}'
+        }));
+
+        jest.spyOn(chatSDK.OCClient, 'sessionInit').mockResolvedValue(Promise.resolve());
+
+        jest.spyOn(platform, 'isNode').mockReturnValue(false);
+        jest.spyOn(platform, 'isReactNative').mockReturnValue(false);
+        jest.spyOn(platform, 'isBrowser').mockReturnValue(true);
+
+        await chatSDK.startChat(optionalParams);
+
+        const sessionInitOptionalParams = {
+            getContext: optionalParams.sendDefaultInitContext
+        }
+
+        expect(chatSDK.OCClient.sessionInit.mock.calls[0][1]).toMatchObject(sessionInitOptionalParams);
+    });
+
     it('ChatSDK.createChatAdapter() should be returned succesfully on Web platform', async () => {
         const chatSDK = new OmnichannelChatSDK(omnichannelConfig);
         chatSDK.getChatConfig = jest.fn();
@@ -74,8 +110,11 @@ describe('Omnichannel Chat SDK (Web)', () => {
         jest.spyOn(platform, 'isBrowser').mockReturnValue(true);
 
         const protocol = 'DirectLine';
+        const optionalParams = {
+            protocol
+        }
         try {
-            await chatSDK.createChatAdapter(protocol);
+            await chatSDK.createChatAdapter(optionalParams);
         } catch (error) {
             expect(error).toEqual(`ChatAdapter for protocol ${protocol} currently not supported`);
         }
@@ -100,7 +139,7 @@ describe('Omnichannel Chat SDK (Web)', () => {
         try {
             await chatSDK.getVoiceVideoCalling();
         } catch (error) {
-            expect(error).toEqual('Voice and video call is not enabled');
+            expect(error.message).toEqual('FeatureDisabled');
         }
     });
 });

@@ -7,5 +7,6 @@ module.exports = {
   ],
   coveragePathIgnorePatterns: [
     "external/aria/"
-  ]
+  ],
+  setupFiles: ["./jestSetup.js"]
 };
