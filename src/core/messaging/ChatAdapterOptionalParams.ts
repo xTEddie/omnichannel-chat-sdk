@@ -13,7 +13,8 @@ interface ChatAdapterOptionalParams {
         },
         options?: {
             [key: string]: any // eslint-disable-line @typescript-eslint/no-explicit-any
-        }
+        },
+        useCdn?: boolean
     };
     DirectLine?: {
         options?: {
