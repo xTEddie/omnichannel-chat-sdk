@@ -49,10 +49,13 @@ const createDirectLine = async (optionalParams: ChatAdapterOptionalParams, chatS
 const createACSAdapter = async (optionalParams: ChatAdapterOptionalParams, chatSDKConfig: ChatSDKConfig, liveChatVersion: LiveChatVersion, protocol: string, telemetry: typeof AriaTelemetry, scenarioMarker: ScenarioMarker, omnichannelConfig: OmnichannelConfig, chatToken: IChatToken, fileManager: AMSFileManager, chatClient: ChatClient, logger: ACSAdapterLogger): Promise<unknown> => {
     const options = optionalParams.ACSAdapter? optionalParams.ACSAdapter.options: {};
     const acsAdapterCDNUrl = urlResolvers.resolveChatAdapterUrl(chatSDKConfig, liveChatVersion, protocol);
+    const useCdn = optionalParams.ACSAdapter?.useCdn === false? false: true;
 
-    telemetry?.setCDNPackages({
-        ACSAdapter: acsAdapterCDNUrl
-    });
+    if (useCdn) {
+        telemetry?.setCDNPackages({
+            ACSAdapter: acsAdapterCDNUrl
+        });
+    }
 
     // Tags formatting middlewares are required to be the last in the pipeline to ensure tags are converted to the right format
     const defaultEgressMiddlewares = [createChannelDataEgressMiddleware({widgetId: omnichannelConfig.widgetId}), createFormatEgressTagsMiddleware()];
@@ -76,10 +79,12 @@ const createACSAdapter = async (optionalParams: ChatAdapterOptionalParams, chatS
 
     scenarioMarker.startScenario(TelemetryEvent.CreateACSAdapter);
 
-    try {
-        await WebUtils.loadScript(acsAdapterCDNUrl);
-    } catch (error) {
-        exceptionThrowers.throwScriptLoadFailure(error, scenarioMarker, TelemetryEvent.CreateACSAdapter);
+    if (useCdn) {
+        try {
+            await WebUtils.loadScript(acsAdapterCDNUrl);
+        } catch (error) {
+            exceptionThrowers.throwScriptLoadFailure(error, scenarioMarker, TelemetryEvent.CreateACSAdapter);
+        }
     }
 
     try {
