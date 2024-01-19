@@ -85,6 +85,12 @@ const createACSAdapter = async (optionalParams: ChatAdapterOptionalParams, chatS
         } catch (error) {
             exceptionThrowers.throwScriptLoadFailure(error, scenarioMarker, TelemetryEvent.CreateACSAdapter);
         }
+    } else {
+        try {
+            require("acs_webchat-chat-adapter");
+        } catch (error) {
+            console.error("'acs_webchat-chat-adapter' is not installed.");
+        }
     }
 
     try {
