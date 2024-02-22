@@ -32,7 +32,9 @@ build({
     platform: "browser",
     plugins: [
         NodeModulesPolyfills(),
-        GlobalsPolyfills(),
+        GlobalsPolyfills({
+            buffer: true // Fir for "ReferenceError: Buffer is not defined"
+        }),
         AzureCommunicationChatPolyfills()
     ],
 }).catch(() => process.exit(1))
