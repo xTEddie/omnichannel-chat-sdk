@@ -18,6 +18,17 @@ const AzureCommunicationChatPolyfills = () => {
                     }
                 }
             })
+
+            onResolve({filter: /@azure\/core-rest-pipeline/}, args => {
+                if (args.path === '@azure/core-rest-pipeline') {
+                    const defaultPath = require.resolve('@azure/core-rest-pipeline');
+                    const basePath = path.dirname(path.dirname(defaultPath))
+                    const esmPath = path.join(basePath, 'dist-esm', 'src','index.js');
+                    return {
+                        path: esmPath.toString()
+                    }
+                }
+            })
         }
     }
 }
