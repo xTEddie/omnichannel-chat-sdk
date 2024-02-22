@@ -313,7 +313,13 @@ export class ACSConversation {
             await this.chatThreadClient?.sendMessage(sendMessageRequest, sendMessageOptions);
             this.logger?.completeScenario(ACSClientEvent.SendMessage);
         } catch (error) {
-            this.logger?.failScenario(ACSClientEvent.SendMessage);
+            const exceptionDetails = {
+                errorObject: `${error}`
+            };
+
+            this.logger?.failScenario(ACSClientEvent.SendMessage, {
+                ExceptionDetails: JSON.stringify(exceptionDetails) 
+            });
 
             throw new Error('SendMessageFailed');
         }
