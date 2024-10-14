@@ -63,11 +63,11 @@ Please make sure you have a chat widget configured before using this package or 
 
 ## Live Chat Widget vs. Chat SDK
 
-Omnichannel offers an live chat widget (LCW) by default. You can use the Chat SDK to build your custom chat widget if:
+Omnichannel offers a live chat widget (LCW) by default. You can use the Chat SDK to build your custom chat widget if:
 - You want to fully customize the user interface of the chat widget to conform with your branding.
-- You want to integrate Omnichannel in your mobile app using React Native.
+- You want to integrate Omnichannel into your mobile app using React Native.
 - You want to integrate additional functionalities that LCW does not offer.
-- Some other cool ideas. Please share with us on what you've achieved with the Chat SDK! 🙂
+- Some other cool ideas. Please share with us what you've achieved with the Chat SDK! 🙂
 
 ### Feature Comparisons
 
@@ -103,6 +103,15 @@ New releases are published on a regular basis to ensure the product quality.
 
 | Version | Docs | Release Date | End of Support | Deprecated |
 | -- | -- | -- | -- | -- |
+| 1.9.0 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.9.0) | May 22nd 2024 | May 22nd 2025 | |
+| 1.8.3 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.8.3) | May 15th 2024 | Mar 15th 2025 | |
+| 1.8.2 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.8.2) | May 7th 2024 | May 7th 2025 | |
+| 1.8.1 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.8.1) | Apr 24th 2024 | Apr 24th 2025 | |
+| 1.8.0 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.8.0) | Mar 29th 2024 | Mar 29th 2025 | |
+| 1.7.2 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.7.2) | Mar 20th 2024 | Mar 20th 2025 | |
+| 1.7.1 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.7.1) | Mar 19th 2024 | Mar 19th 2025 | |
+| 1.7.0 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.7.0) | Mar 7th 2024 | Mar 7th 2025 | |
+| 1.6.3 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.6.3) | Jan 30th 2024 | Jan 30th 2025 | |
 | 1.6.2 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.6.2) | Dec 12th 2023 | Dec 12th 2024 | |
 | 1.6.1 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.6.1) | Dec 7th 2023 | Dec 7th 2024 | |
 | 1.6.0 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.6.0) | Dec 4th 2023 | Dec 4th 2024 | |
@@ -119,10 +128,10 @@ New releases are published on a regular basis to ensure the product quality.
 | 1.4.5 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.4.5) | Aug 2nd 2023 | Aug 2nd 2024 | |
 | 1.4.4 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.4.4) | Jul 19th 2023 | Jul 19th 2024 | |
 | 1.4.3 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.4.3) | Jun 15th 2023 | Jun 15th 2024 | |
-| 1.4.2 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.4.2) | May 19th 2023 | May 19th 2024 | |
-| 1.4.1 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.4.1) | May 5th 2023 | May 5th 2024 | |
-| 1.4.0 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.4.0) | May 2nd 2023 | May 2nd 2024 | |
-| 1.3.0 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.3.0) | Apr 5th 2023 | Apr 5th 2024 | |
+| 1.4.2 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.4.2) | May 19th 2023 | May 19th 2024 | ✔️ |
+| 1.4.1 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.4.1) | May 5th 2023 | May 5th 2024 | ✔️ |
+| 1.4.0 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.4.0) | May 2nd 2023 | May 2nd 2024 | ✔️ |
+| 1.3.0 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.3.0) | Apr 5th 2023 | Apr 5th 2024 | ✔️ |
 | 1.2.0 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.2.0) | Nov 11th 2022 | Nov 11th 2023 | ✔️ |
 | 1.1.0 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.1.0) | Apr 15th 2021 | Apr 15th 2022 | ✔️ |
 | 1.0.0 | [Release Notes](https://github.com/microsoft/omnichannel-chat-sdk/releases/tag/v1.0.0) | Oct 8th 2021 | Oct 8th 2022 | ✔️ |
@@ -179,7 +188,7 @@ The following steps will be required to run Omnichannel Chat SDK on React Native
     };
     ```
 
-1. Add following *import* on top of your entry point file
+1. Add the following *import* on top of your entry point file
     ```ts
     import 'node-libs-react-native/globals';
     import 'react-native-get-random-values';
@@ -315,7 +324,7 @@ const conversationDetails = await chatSDK.getConversationDetails(optionalParams)
 
 ### Get chat Token
 
-It gets the chat token used to initiates a chat with Omnichannel messaging client.
+It gets the chat token used to initiate a chat with Omnichannel messaging client.
 
 ```ts
 const chatToken = await chatSDK.getChatToken();
@@ -323,7 +332,7 @@ const chatToken = await chatSDK.getChatToken();
 
 ### Get Calling Token
 
-It gets the calling token used to initiates a Voice & Video Call.
+It gets the calling token used to initiate a Voice & Video Call.
 
 ```ts
 const callingToken = await chatSDK.getCallingToken();
@@ -371,7 +380,7 @@ chatSDK.onNewMessage((message) => {
 ```
 ### On Typing Event
 
-It subscribes to agent typing event.
+It subscribes to an agent typing event.
 
 ```ts
 chatSDK.onTypingEvent(() => {
@@ -381,7 +390,7 @@ chatSDK.onTypingEvent(() => {
 
 ### On Agent End Session
 
-It subscribes to agent ending the session of the conversation.
+It subscribes to an agent ending the session of the conversation.
 
 ```ts
 chatSDK.onAgentEndSession(() => {
@@ -553,7 +562,7 @@ await chatSDK.startChat();
 // 2. Save post chat survey context before ending chat
 try {
     const context = await chatSDK.getPostChatSurveyContext();
-    if (context.participantJoined) { // participantJoined will be true if an agent has joined the conversation, or a bot has joined the conversation and the bot survey flag has been turned on on the admin side.
+    if (context.participantJoined) { // participantJoined will be true if an agent has joined the conversation, or a bot has joined the conversation and the bot survey flag has been turned on the admin side.
         // formsProLocale is the default language you have set on the CustomerVoice portal. You can override this url parameter with any locale that CustomerVoice supports.
         // If "&lang=" is not set on the url, the locale will be English.
         const link = context.participantType === "Bot" ? context.botSurveyInviteLink : context.surveyInviteLink;
@@ -562,7 +571,7 @@ try {
         // This link is accessible and will redirect to the survey page. Use it as you see fit.
     }
 } catch (ex) {
-    // If the post chat should not be shown by any reason (e.g. post chat is not enabled), promise will be rejected.
+    // If the post chat should not be shown for any reason (e.g. post chat is not enabled), promise will be rejected.
 }
 
 // 3. End chat
