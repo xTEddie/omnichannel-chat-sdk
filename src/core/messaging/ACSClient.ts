@@ -31,7 +31,8 @@ enum ACSClientEvent {
     SendTyping = 'SendTyping',
     StartPolling = 'StartPolling',
     StopPolling = 'StopPolling',
-    Disconnect = 'Disconnect'
+    Disconnect = 'Disconnect',
+    RefreshToken = 'RefreshToken'
 }
 
 interface EventListenersMapping {
@@ -461,12 +462,27 @@ class ACSClient {
         this.logger?.startScenario(ACSClientEvent.InitializeACSClient);
 
         const tokenRefresher = async () => {
+            this.logger?.startScenario(ACSClientEvent.RefreshToken);
+            let token = acsClientConfig.token;
             if (acsClientConfig.tokenRefresher) {
-                const token = await acsClientConfig.tokenRefresher();
-                return token;
+                try {
+                    token = await acsClientConfig.tokenRefresher();
+                } catch (error) {
+                    const exceptionDetails = {
+                        response: 'RefreshTokenFailure',
+                        errorObject: `${error}`
+                    };
+
+                    this.logger?.failScenario(ACSClientEvent.RefreshToken, {
+                        ExceptionDetails: JSON.stringify(exceptionDetails)
+                    });
+
+                    return token;
+                }
             }
 
-            return acsClientConfig.token;
+            this.logger?.completeScenario(ACSClientEvent.RefreshToken);
+            return token;
         };
 
         try {
